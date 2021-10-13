@@ -29,8 +29,11 @@ iter = 1;
 %Using a while loop instead of doing arithmetic; change this later
 while indx(2) <= sz(1)
     
-    %C is the mean centred matrix
-    C = data(indx(1):indx(2),:) - mean(data(indx(1):indx(2),:));
+    %C is the autoscaled matrix
+    C = (data(indx(1):indx(2),:) - mean(data(indx(1):indx(2),:)))./std(data(indx(1):indx(2),:));
+    
+    %C
+    C(isnan(C)) = 0;
     
     %s are the singular values
     s = svds(C,2);
