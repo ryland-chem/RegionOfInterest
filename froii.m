@@ -13,7 +13,7 @@
 %
 %v1.01
 
-function [pv] = froii(data,wndw)
+function [pv, modPVans] = froii(data, wndw, cutOff)
 
 %Initialisation
 sz = size(data);
@@ -78,4 +78,21 @@ end
 %Change the orientation to a column
 pv = pv';
 
+modPVans = pv; 
+ 
+for i = 1:length(pv) 
+     
+    if pv(i) < CutOff 
+         
+        modPVans(i) = 0; 
+       
+    elseif pv(i) > CutOff 
+         
+        modPVans(i) = pv(i); 
+     
+    end 
+         
+end 
+
 end
+
