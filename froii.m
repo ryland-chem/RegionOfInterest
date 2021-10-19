@@ -13,7 +13,7 @@
 %
 %v1.01
 
-function [pv, modPVans] = froii(data, wndw, cutOff)
+function [pv, modPVans] = froii(data, wndw, CutOff)
 
 %Initialisation
 sz = size(data);
