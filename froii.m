@@ -132,6 +132,22 @@ for i = 1:numbScans
 end  
 
 %bool to print graph
+prompt = 'Output graph (y/n)';
+choicePrint = input(prompt, 's');
+
+if choicePrint == 'y'
+    
+    yyaxis right; hold on; plot(ticData); ylabel('Intensity');
+    
+    yyaxis left; hold on; plot(pv); ylabel('p value');
+    
+    yyaxis left; hold on; plot(modPVans);
+    
+    xlabel('time (s)');
+    
+else
+    
+end
 
 %conditionals to drop data where not enough points
 
