@@ -131,6 +131,9 @@ for i = 1:numbScans
     
 end  
 
+%bool to print graph
+
+%conditionals to drop data where not enough points
 
 end
 
