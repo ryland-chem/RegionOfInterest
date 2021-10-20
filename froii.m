@@ -13,7 +13,7 @@
 %
 %v1.01
 
-function [pv, modPVans, ticData] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDropped] = froii(data, wndw, CutOff)
 
 %Initialisation
 sz = size(data);
@@ -97,11 +97,10 @@ for i = 1:length(pv)
          
 end 
 
-% need to drop the noise from the TIC
-% first generate the TIC so the user doesnt have to input it
+%need to drop the noise from the TIC
+%first generate the TIC so the user doesnt have to input it
 %first calculate the TIC
-%empty array for TIC data
-ticData = [];
+ticData = zeros(numbScans,1);
 
 for i = 1:numbScans
     
@@ -111,6 +110,26 @@ end
 
 %transpose to make it go the right direction
 ticData = ticData';
+
+%column of zeros for noise dropped from TIC
+%for speed
+noiseDropped = zeros(numbScans,1);
+
+for i = 1:numbScans
+   
+    %if the p value wasnt cutoff carry the tic value over
+    if modPVans(i) > 0
+       
+        noiseDropped(i) = ticData(i);
+    
+    %if the p value was cutoff then drop tic value
+    elseif modPVans(i) == 0
+        
+        noiseDropped(i) = 0;
+        
+    end
+    
+end  
 
 
 
