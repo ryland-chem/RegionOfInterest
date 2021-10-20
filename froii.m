@@ -1,6 +1,6 @@
 %%Region of interest selection for 1D GC-MS data using pseudo-fisher ratios
 %
-%(c) 2021 Michael Sorochan Armstrong
+%(c) 2021 Michael Sorochan Armstrong & Ryland T. Giebelhaus
 %
 %Utilisation of a moving window function to calculate the f ratios for a
 %particular region of interest. Smaller windows are more sensitive to
@@ -13,7 +13,7 @@
 %
 %v1.01
 
-function [pv, modPVans] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData] = froii(data, wndw, CutOff)
 
 %Initialisation
 sz = size(data);
@@ -21,6 +21,9 @@ sz = size(data);
 %Start at 1:wndw
 indx(1) = 1;
 indx(2) = wndw;
+
+%number of scans in dataset
+numbScans = sz(1);
 
 mat = [];
 
@@ -93,6 +96,23 @@ for i = 1:length(pv)
     end 
          
 end 
+
+% need to drop the noise from the TIC
+% first generate the TIC so the user doesnt have to input it
+%first calculate the TIC
+%empty array for TIC data
+ticData = [];
+
+for i = 1:numbScans
+    
+    ticData(i) = sum(data(i,:));
+
+end
+
+%transpose to make it go the right direction
+ticData = ticData';
+
+
 
 end
 
