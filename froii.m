@@ -13,7 +13,12 @@
 %
 %v1.01
 
-function [pv, modPVans, ticData, noiseDropped] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
+
+%bool to print graph
+%at the start so user can input then let run
+prompt = 'Output graph (y/n)';
+choicePrint = input(prompt, 's');
 
 %Initialisation
 sz = size(data);
@@ -81,6 +86,7 @@ end
 %Change the orientation to a column
 pv = pv';
 
+%copy pv's so we dont ruin column
 modPVans = pv; 
  
 for i = 1:length(pv) 
@@ -113,7 +119,10 @@ ticData = ticData';
 
 %column of zeros for noise dropped from TIC
 %for speed
-noiseDropped = zeros(numbScans,1);
+noiseDropped = zeros(numbScans, 1);
+
+%column of bools, 1 for above p cutoff and 0 for below
+boolCutOff = zeros(numbScans, 1);
 
 for i = 1:numbScans
    
@@ -121,19 +130,19 @@ for i = 1:numbScans
     if modPVans(i) > 0
        
         noiseDropped(i) = ticData(i);
+        boolCutOff(i) = 1;
     
     %if the p value was cutoff then drop tic value
     elseif modPVans(i) == 0
         
         noiseDropped(i) = 0;
+        boolCutOff(i) = 0;
         
     end
     
-end  
+end 
 
-%bool to print graph
-prompt = 'Output graph (y/n)';
-choicePrint = input(prompt, 's');
+%conditional whether to print or not
 
 if choicePrint == 'y'
     
@@ -150,6 +159,8 @@ else
 end
 
 %conditionals to drop data where not enough points
+
+%use boolCutOff to put 'boxes' around where we have ROI
 
 end
 
