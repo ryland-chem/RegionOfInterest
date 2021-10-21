@@ -41,6 +41,16 @@ indx(2) = wndw;
 %number of scans in dataset
 numbScans = sz(1);
 
+secTime = [];
+
+for i = 1:sz(1)
+   
+    %converts to seconds
+    %i - 1 as the first scan is 0 sec
+    secTime(i) = (i - 1)/200;
+    
+end
+
 mat = [];
 
 iter = 1;
@@ -157,7 +167,6 @@ end
 
 if choicePrint == 'y'
     
-    %plots the TIC data
     yyaxis right; hold on; plot(ticData); ylabel('Intensity');
     
         %plots boxes around the ROI
