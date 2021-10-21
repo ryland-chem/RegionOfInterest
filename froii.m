@@ -146,12 +146,18 @@ end
 
 if choicePrint == 'y'
     
+    %plots the TIC data
     yyaxis right; hold on; plot(ticData); ylabel('Intensity');
     
-    yyaxis left; hold on; plot(pv); ylabel('p value');
-    
-    %plots boxes around the ROI
-    yyaxis left; hold on; plot(boolCutOff);
+        %plots boxes around the ROI
+        yyaxis left; hold on; area(boolCutOff);
+
+        %area color
+        newcolors = [0.7 0.7 0.7]; %grey
+        colororder(newcolors);
+
+        %set transparent
+        alpha(0.4);
     
     xlabel('time (s)');
     
@@ -159,9 +165,6 @@ else
     
 end
 
-%use boolCutOff to put 'boxes' around where we have ROI
-%issue in plotting, area works but need to (1) make transparent and
-%(2) overlay the TIC
 
 end
 
