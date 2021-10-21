@@ -24,7 +24,7 @@
 
 %to normalize the x axis to time need scan speed
 %will assume 200 Hz for now
-function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDropped, boolCutOff, secTime] = froii(data, wndw, CutOff)
 
 %bool to print graph
 %at the start so user can input then let run
@@ -47,9 +47,15 @@ for i = 1:sz(1)
    
     %converts to seconds
     %i - 1 as the first scan is 0 sec
+    %assuming scan speed is 200Hz
+    %might(will) have to update this
+    %make a note on github
     secTime(i) = (i - 1)/200;
     
 end
+
+%have to flip secTime
+secTime = secTime';
 
 mat = [];
 
@@ -167,10 +173,10 @@ end
 
 if choicePrint == 'y'
     
-    yyaxis right; hold on; plot(ticData); ylabel('Intensity');
+    yyaxis right; hold on; plot(secTime, ticData); ylabel('Intensity');
     
         %plots boxes around the ROI
-        yyaxis left; hold on; area(boolCutOff);
+        yyaxis left; hold on; area(secTime, boolCutOff);
 
         %area color
         newcolors = [0.7 0.7 0.7]; %grey
