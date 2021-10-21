@@ -22,6 +22,8 @@
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
 
+%to normalize the x axis to time need scan speed
+%will assume 200 Hz for now
 function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
 
 %bool to print graph
