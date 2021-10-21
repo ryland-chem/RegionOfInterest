@@ -150,15 +150,14 @@ if choicePrint == 'y'
     
     yyaxis left; hold on; plot(pv); ylabel('p value');
     
-    yyaxis left; hold on; plot(modPVans);
+    %plots boxes around the ROI
+    yyaxis left; hold on; plot(boolCutOff);
     
     xlabel('time (s)');
     
 else
     
 end
-
-%conditionals to drop data where not enough points
 
 %use boolCutOff to put 'boxes' around where we have ROI
 %issue in plotting, area works but need to (1) make transparent and
