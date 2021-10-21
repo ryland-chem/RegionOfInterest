@@ -22,6 +22,8 @@
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
 
+%to normalize the x axis to time need scan speed
+%will assume 200 Hz for now
 function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
 
 %bool to print graph
@@ -38,6 +40,16 @@ indx(2) = wndw;
 
 %number of scans in dataset
 numbScans = sz(1);
+
+secTime = [];
+
+for i = 1:sz(1)
+   
+    %converts to seconds
+    %i - 1 as the first scan is 0 sec
+    secTime(i) = (i - 1)/200;
+    
+end
 
 mat = [];
 
@@ -155,7 +167,6 @@ end
 
 if choicePrint == 'y'
     
-    %plots the TIC data
     yyaxis right; hold on; plot(ticData); ylabel('Intensity');
     
         %plots boxes around the ROI
