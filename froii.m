@@ -161,6 +161,8 @@ end
 %conditionals to drop data where not enough points
 
 %use boolCutOff to put 'boxes' around where we have ROI
+%issue in plotting, area works but need to (1) make transparent and
+%(2) overlay the TIC
 
 end
 
