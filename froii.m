@@ -155,11 +155,18 @@ end
 
 if choicePrint == 'y'
     
+    %plots the TIC data
     yyaxis right; hold on; plot(ticData); ylabel('Intensity');
     
-    yyaxis left; hold on; plot(pv); ylabel('p value');
-    
-    yyaxis left; hold on; plot(modPVans);
+        %plots boxes around the ROI
+        yyaxis left; hold on; area(boolCutOff);
+
+        %area color
+        newcolors = [0.7 0.7 0.7]; %grey
+        colororder(newcolors);
+
+        %set transparent
+        alpha(0.4);
     
     xlabel('time (s)');
     
@@ -167,9 +174,6 @@ else
     
 end
 
-%conditionals to drop data where not enough points
-
-%use boolCutOff to put 'boxes' around where we have ROI
 
 end
 
