@@ -11,7 +11,16 @@
 %
 %Currently not optimised for speed.
 %
-%v1.01
+%v1.1
+
+%main branch, code does the following
+%takes xic data, scan window (between 5-40 ideally) and p value cutoff from
+%user
+%returns the pvals for each scan, the modPVans which is the pvals less the
+%pvalues below the cutoff, the ticData which is just the XIC data converted
+%to TIC, noiseDropped which is the TIC without regions of non-interest, and
+%boolCutOff which is a binary yes or no if a p-value is above (1) or below
+%(0) the cutoff input by the user. This program also outputs graphs.
 
 function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
 
