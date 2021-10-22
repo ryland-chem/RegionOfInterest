@@ -41,22 +41,6 @@ indx(2) = wndw;
 %number of scans in dataset
 numbScans = sz(1);
 
-secTime = [];
-
-for i = 1:sz(1)
-   
-    %converts to seconds
-    %i - 1 as the first scan is 0 sec
-    %assuming scan speed is 200Hz
-    %might(will) have to update this
-    %make a note on github
-    secTime(i) = (i - 1)/200;
-    
-end
-
-%have to flip secTime
-secTime = secTime';
-
 mat = [];
 
 iter = 1;
@@ -173,10 +157,10 @@ end
 
 if choicePrint == 'y'
     
-    yyaxis right; hold on; plot(secTime, ticData); ylabel('Intensity');
+    yyaxis right; hold on; plot(ticData); ylabel('Intensity');
     
         %plots boxes around the ROI
-        yyaxis left; hold on; area(secTime, boolCutOff);
+        yyaxis left; hold on; area(boolCutOff);
 
         %area color
         newcolors = [0.7 0.7 0.7]; %grey
