@@ -1,3 +1,6 @@
+%compresses the data due to issue with the MS data
+%michael whipped this up
+
 function [mzc,xicc] = mzcompress(mz,xic)
 
 %round the mz vector
