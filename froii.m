@@ -24,7 +24,7 @@
 
 %to normalize the x axis to time need scan speed
 %will assume 200 Hz for now
-function [pv, modPVans, ticData, noiseDropped, boolCutOff, secTime] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
 
 %bool to print graph
 %at the start so user can input then let run
@@ -97,16 +97,19 @@ end
 %Change the orientation to a column
 pv = pv';
 
+smoothPV = smooth(pv, 30);
+pv = smoothPV;
+
 %copy pv's so we dont ruin column
-modPVans = pv; 
+modPVans = smoothPV; 
  
-for i = 1:length(pv) 
+for i = 1:length(smoothPV) 
      
-    if pv(i) < CutOff 
+    if smoothPV(i) < CutOff 
          
         modPVans(i) = 0; 
        
-    elseif pv(i) > CutOff 
+    elseif smoothPV(i) > CutOff 
          
         modPVans(i) = pv(i); 
      
