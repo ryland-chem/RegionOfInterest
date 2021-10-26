@@ -98,8 +98,8 @@ end
 pv = pv';
 
 %smoothing the data, window size = 30
-smoothPV = smooth(pv, 30);
-pv = smoothPV;
+%smoothPV = smooth(pv, 30);
+smoothPV = pv;
 
 %copy pv's so we dont ruin column
 modPVans = smoothPV; 
