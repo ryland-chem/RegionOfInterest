@@ -97,6 +97,7 @@ end
 %Change the orientation to a column
 pv = pv';
 
+%commented out the smoothing of the pv
 %smoothing the data, window size = 30
 %smoothPV = smooth(pv, 30);
 smoothPV = pv;
