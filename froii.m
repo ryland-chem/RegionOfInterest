@@ -22,7 +22,6 @@
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
 
-
 function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
 
 %bool to print graph
@@ -60,7 +59,7 @@ while indx(2) <= sz(1)
     f(iter) = s(1)^2/s(2)^2; %#ok
     
     %matrix of probabilities
-    mat(indx(1):indx(2),iter) = fcdf(f(iter),wndw,wndw); %#ok
+    mat(indx(1):indx(2),iter) = fcdf(f(iter),wndw - 1,wndw - 2); %#ok
     
     %increase the iteration number, change the region where the window is
     %active
@@ -167,8 +166,6 @@ if choicePrint == 'y'
 
         %set transparent
         alpha(0.4);
-    
-    xlabel('time (s)');
     
 else
     
