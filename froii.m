@@ -24,7 +24,7 @@
 
 %likely want to update the outputs
 
-function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froii(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDropped, boolCutOff, mat] = froii(data, wndw, CutOff)
 
 %bool to print graph
 %at the start so user can input then let run
@@ -60,8 +60,11 @@ while indx(2) <= sz(1)
     %f is the pseudo fisher ratio
     f(iter) = s(1)^2/s(2)^2; %#ok
     
-    %matrix of probabilities
-    mat(indx(1):indx(2),iter) = fcdf(f(iter),wndw - 1,wndw - 2); %#ok
+    %probablilty vector
+    probVect = [];
+    probVect = fcdf(f(iter),wndw - 1,wndw - 2); 
+    
+    mat(iter) = probVect(1);
     
     %increase the iteration number, change the region where the window is
     %active
@@ -76,7 +79,7 @@ for ii = 1:sz(1)
    %ii is the observation number we are looping through
    %the degrees of freedom is the number of observations, since there is no
    %class information
-   dof(ii) = sum(mat(ii,:) > 0); %#ok
+   dof(ii) = sum(mat(ii,1) > 0); %#ok
    
    %retrieve the nonzero elements. mat is an off-diagonal matrix.
    nzx2 = nonzeros(mat(ii,:));
