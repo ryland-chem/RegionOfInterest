@@ -79,7 +79,7 @@ for ii = 1:sz(1)
    %ii is the observation number we are looping through
    %the degrees of freedom is the number of observations, since there is no
    %class information
-   dof(ii) = sum(mat(ii,1) > 0); %#ok
+   dof(ii) = sum(mat(ii,:) > 0); %#ok
    
    %retrieve the nonzero elements. mat is an off-diagonal matrix.
    nzx2 = nonzeros(mat(ii,:));
