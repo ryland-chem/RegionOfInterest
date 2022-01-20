@@ -46,7 +46,7 @@ sumChiSq = zeros(sz(1),1);
 
 pv = [];
 
-%Using a while loop instead of doing arithmetic; change this later
+%for loop 
 for i = 1:(sz(1)-wndw)
     
     %C is the autoscaled matrix
@@ -58,11 +58,11 @@ for i = 1:(sz(1)-wndw)
     %s are the singular values
     s = svds(C,2);
     
-    %f is the pseudo fisher ratio
+    %f is the fisher ratio
     f(i) = s(1)^2/s(2)^2; %#ok
     
     %matrix of probabilities
-    mat(indx(1):indx(2),1) = fcdf(f(i),wndw - 1, wndw - 2); %#ok
+    mat(indx(1):indx(2),1) = fcdf(f(i),wndw - 1, wndw - 2);
     
     parfor j = 1:sz(1)
        
@@ -115,7 +115,7 @@ for ii = 1:sz(1)
    parfor jj = 1:sz(1)
        
        %every probability is translated to a chi2 value with a dof of 1.
-       pv(jj) = chi2cdf(sumChiSq(jj), dof(jj)); %#ok
+       pv(jj) = chi2cdf(sumChiSq(jj), dof(jj));
        
    end
    
