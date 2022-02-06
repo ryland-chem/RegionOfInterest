@@ -22,7 +22,7 @@
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
 
-function [pv, modPVans, ticData, noiseDropped, boolCutOff] = froiispeedop(data, wndw, CutOff)
+function [pv, modPVans, ticData, noiseDroppedTIC, noiseDropped, boolCutOff] = froiispeedop(data, wndw, CutOff)
 
 %bool to print graph
 %at the start so user can input then let run
@@ -52,16 +52,16 @@ for i = 1:(sz(1)-wndw)
     %C is the autoscaled matrix
     C = (data(indx(1):indx(2),:) - mean(data(indx(1):indx(2),:)))./std(data(indx(1):indx(2),:));
     
-    %C
+    %C converts NA values to 0
     C(isnan(C)) = 0;
     
     %s are the singular values
     s = svds(C,2);
     
     %f is the fisher ratio
-    f(i) = s(1)^2/s(2)^2; %#ok
+    f(i) = ((s(1)^2)/(wndw-1))/((s(2)^2)/(wndw-2)); %#ok
     
-    %matrix of probabilities
+    %vector of probabilities
     mat(indx(1):indx(2),1) = fcdf(f(i),wndw - 1, wndw - 2);
     
     parfor j = 1:sz(1)
@@ -114,7 +114,7 @@ for ii = 1:sz(1)
    
    parfor jj = 1:sz(1)
        
-       %every probability is translated to a chi2 value with a dof of 1.
+       %every chi sq is translated to a p value with a dof of 1.
        pv(jj) = chi2cdf(sumChiSq(jj), dof(jj));
        
    end
@@ -158,7 +158,11 @@ ticData = ticData';
 
 %column of zeros for noise dropped from TIC
 %for speed
-noiseDropped = zeros(sz(1), 1);
+noiseDroppedTIC = zeros(sz(1), 1);
+
+%empty matrix for entire chromatogram with just regions
+%to preserve the spectral data and export it
+noiseDropped = zeros(sz(1), sz(2));
 
 %column of bools, 1 for above p cutoff and 0 for below
 boolCutOff = zeros(sz(1), 1);
@@ -167,14 +171,20 @@ for i = 1:sz(1)
    
     %if the p value wasnt cutoff carry the tic value over
     if modPVans(i) > 0
-       
-        noiseDropped(i) = ticData(i);
+        
+        %for TIC data
+        noiseDroppedTIC(i) = ticData(i);
+        
+        %for spectral data
+        noiseDropped(i,:) = data(i,:);
+        
+        %for the cutoff
         boolCutOff(i) = 1;
     
     %if the p value was cutoff then drop tic value
     elseif modPVans(i) == 0
         
-        noiseDropped(i) = 0;
+        noiseDroppedTIC(i) = 0;
         boolCutOff(i) = 0;
         
     end
