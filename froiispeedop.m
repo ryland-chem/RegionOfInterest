@@ -9,7 +9,7 @@
 %Currently this returns a vector of probabilities for one-dimensional data,
 %and it is up to the user to determine the significance level.
 %
-%Currently not optimised for speed.
+%
 %
 %v1.1
 
