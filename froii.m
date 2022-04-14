@@ -1,6 +1,7 @@
 %%Region of interest selection for 1D GC-MS data using pseudo-fisher ratios
 %
-%(c) 2021 Michael Sorochan Armstrong & Ryland T. Giebelhaus
+%(c) 2022 Ryland T. Giebelhaus, Michael D.S. Armstrong, A. Paulina de la
+%Mata, James J. Harynuk
 %
 %Utilisation of a moving window function to calculate the f ratios for a
 %particular region of interest. Smaller windows are more sensitive to
@@ -9,9 +10,9 @@
 %Currently this returns a vector of probabilities for one-dimensional data,
 %and it is up to the user to determine the significance level.
 %
-%Currently not optimised for speed.
 %
-%v1.1
+%
+%v1.2
 
 %main branch, code does the following
 %takes xic data, scan window (between 5-40 ideally) and p value cutoff from
@@ -22,9 +23,24 @@
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
 
-%likely want to update the outputs
+%%%inputs
+%%data: M x N array of ion intensities, where M is scans and N is ion m/z
+%%wndw: moving window size. Ideally this should be about the approximate
+%width of the average peak in your separation. 10 is a good starting point
+%if unsure
+%%CutOff: probability cutoff. 0.7 is a good place to start.
 
-function [pv, modPVans, ticData, noiseDropped, boolCutOff, mat] = froii(data, wndw, CutOff)
+%%%outputs
+%%pv: probability values for each scan. Is overlaid on output plot by
+%default
+%%modPVans: modified probability values, above the CutOff threshold.
+%%ticData: Total Ion Chromatogram of the data. Plotted by default.
+%%noiseDroppedTIC: TIC with non ROIs dropped.
+%%noiseDropped: all ions and scans with noise (non ROIs) dropped. This is
+%intended for use in further analysis.
+%%boolCutOff: 0 = scan not in ROI, 1 = scan in ROI.
+
+function [pv, modPVans, ticData, noiseDroppedTIC, noiseDropped, boolCutOff] = froiispeedop(data, wndw, CutOff)
 
 %bool to print graph
 %at the start so user can input then let run
@@ -38,63 +54,90 @@ sz = size(data);
 indx(1) = 1;
 indx(2) = wndw;
 
-%number of scans in dataset
-numbScans = sz(1);
-
-mat = [];
+mat = zeros(sz(1),1);
 
 iter = 1;
 
-%Using a while loop instead of doing arithmetic; change this later
-while indx(2) <= sz(1)
+chisqVec = [];
+
+sumChiSq = zeros(sz(1),1);
+
+pv = [];
+
+%for loop 
+for i = 1:(sz(1)-wndw)
     
     %C is the autoscaled matrix
     C = (data(indx(1):indx(2),:) - mean(data(indx(1):indx(2),:)))./std(data(indx(1):indx(2),:));
     
-    %C
+    %C converts NA values to 0
     C(isnan(C)) = 0;
     
     %s are the singular values
     s = svds(C,2);
     
-    %f is the pseudo fisher ratio
-    f(iter) = s(1)^2/s(2)^2; %#ok
+    %f is the fisher ratio
+    f(i) = ((s(1)^2)/(wndw-1))/((s(2)^2)/(wndw-2)); %#ok
     
-    %probablilty vector
-    probVect = [];
-    probVect = fcdf(f(iter),wndw - 1,wndw - 2); 
+    %vector of probabilities
+    mat(indx(1):indx(2),1) = fcdf(f(i),wndw - 1, wndw - 2);
     
-    mat(iter) = probVect(1);
+    parfor j = 1:sz(1)
+       
+        chisqVect(1,j) = chi2inv(mat(j),1);
+        
+    end
+    
+    chisqVect = chisqVect';
+    
+    sumChiSq = sumChiSq + chisqVect;
+    
+    chisqVect = [];
+    
+    mat = zeros(sz(1),1);
     
     %increase the iteration number, change the region where the window is
     %active
-    iter = iter + 1;
+
     indx(1) = indx(1) + 1;
     indx(2) = indx(2) + 1;
     
 end
+
 
 for ii = 1:sz(1)
     
    %ii is the observation number we are looping through
    %the degrees of freedom is the number of observations, since there is no
    %class information
-   dof(ii) = sum(mat(ii,:) > 0); %#ok
+   %getting DOF through relationship between the number of observations and
+   %the window size
+    for k = 1:sz(1)
+
+        if k <= wndw
+
+            dof(k) = k;
+
+        elseif k > sz(1) - wndw
+
+            dof(k) = wndw - (k - (sz(1) + 1 - wndw));
+
+        elseif k >= wndw
+
+            dof(k) = wndw;
+
+        end
+
+    end
    
-   %retrieve the nonzero elements. mat is an off-diagonal matrix.
-   nzx2 = nonzeros(mat(ii,:));
-   
-   for qq = 1:max(size(nzx2))
-       %every probability is translated to a chi2 value with a dof of 1.
-       x2mat(ii,qq) = chi2inv(nzx2(qq),1); %#ok
+   parfor jj = 1:sz(1)
+       
+       %every chi sq is translated to a p value with a dof of 1.
+       pv(jj) = chi2cdf(sumChiSq(jj), dof(jj));
+       
    end
    
-   %sum the chi2 values
-   x2vec(ii) = sum(x2mat(ii,:),2); %#ok
-   
-   %translate the chi2 values back to
-   pv(ii) = chi2cdf(x2vec(ii),dof(ii)); %#ok
-   
+
 end
 
 %Change the orientation to a column
@@ -120,9 +163,9 @@ end
 %need to drop the noise from the TIC
 %first generate the TIC so the user doesnt have to input it
 %first calculate the TIC
-ticData = zeros(numbScans,1);
+ticData = zeros(sz(1),1);
 
-for i = 1:numbScans
+for i = 1:sz(1)
     
     ticData(i) = sum(data(i,:));
 
@@ -133,23 +176,33 @@ ticData = ticData';
 
 %column of zeros for noise dropped from TIC
 %for speed
-noiseDropped = zeros(numbScans, 1);
+noiseDroppedTIC = zeros(sz(1), 1);
+
+%empty matrix for entire chromatogram with just regions
+%to preserve the spectral data and export it
+noiseDropped = zeros(sz(1), sz(2));
 
 %column of bools, 1 for above p cutoff and 0 for below
-boolCutOff = zeros(numbScans, 1);
+boolCutOff = zeros(sz(1), 1);
 
-for i = 1:numbScans
+for i = 1:sz(1)
    
     %if the p value wasnt cutoff carry the tic value over
     if modPVans(i) > 0
-       
-        noiseDropped(i) = ticData(i);
+        
+        %for TIC data
+        noiseDroppedTIC(i) = ticData(i);
+        
+        %for spectral data
+        noiseDropped(i,:) = data(i,:);
+        
+        %for the cutoff
         boolCutOff(i) = 1;
     
     %if the p value was cutoff then drop tic value
     elseif modPVans(i) == 0
         
-        noiseDropped(i) = 0;
+        noiseDroppedTIC(i) = 0;
         boolCutOff(i) = 0;
         
     end
@@ -178,4 +231,3 @@ end
 
 
 end
-
