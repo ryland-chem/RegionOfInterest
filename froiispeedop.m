@@ -1,6 +1,7 @@
 %%Region of interest selection for 1D GC-MS data using pseudo-fisher ratios
 %
-%(c) 2021 Michael Sorochan Armstrong & Ryland T. Giebelhaus
+%(c) 2022 Ryland T. Giebelhaus, Michael D.S. Armstrong, A. Paulina de la
+%Mata, James J. Harynuk
 %
 %Utilisation of a moving window function to calculate the f ratios for a
 %particular region of interest. Smaller windows are more sensitive to
@@ -11,7 +12,7 @@
 %
 %
 %
-%v1.1
+%v1.2
 
 %main branch, code does the following
 %takes xic data, scan window (between 5-40 ideally) and p value cutoff from
@@ -21,6 +22,23 @@
 %to TIC, noiseDropped which is the TIC without regions of non-interest, and
 %boolCutOff which is a binary yes or no if a p-value is above (1) or below
 %(0) the cutoff input by the user. This program also outputs graphs.
+
+%%%inputs
+%%data: M x N array of ion intensities, where M is scans and N is ion m/z
+%%wndw: moving window size. Ideally this should be about the approximate
+%width of the average peak in your separation. 10 is a good starting point
+%if unsure
+%%CutOff: probability cutoff. 0.7 is a good place to start.
+
+%%%outputs
+%%pv: probability values for each scan. Is overlaid on output plot by
+%default
+%%modPVans: modified probability values, above the CutOff threshold.
+%%ticData: Total Ion Chromatogram of the data. Plotted by default.
+%%noiseDroppedTIC: TIC with non ROIs dropped.
+%%noiseDropped: all ions and scans with noise (non ROIs) dropped. This is
+%intended for use in further analysis.
+%%boolCutOff: 0 = scan not in ROI, 1 = scan in ROI.
 
 function [pv, modPVans, ticData, noiseDroppedTIC, noiseDropped, boolCutOff] = froiispeedop(data, wndw, CutOff)
 
