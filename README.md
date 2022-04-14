@@ -7,8 +7,11 @@
 
 ## 1.0 About
 This is a MatLab algorithm developed to locate regions of interest (ROI) within 1D GC-MS datasets. The intention is that the ROIs are selected then subjected to further chemometrics, especially approaches where a low number of components is desired.
+
 ## 2.0 Use
 Users input data as an **M** by **N** matrix into the function, where **M** is individual scans and **N** is the _m/z_ of each ion, and the matrix is ion intensities. 
+
+Download our latest release (v1.2), open in the most recent release of MatLab, and enjoy. 
 
 ### 2.1 Inputs
 * **data**: M x N array of ion intensities, where M is scans and N is ion m/z.
