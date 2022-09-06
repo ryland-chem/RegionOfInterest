@@ -205,6 +205,9 @@ for i = 1:sz(1)
         noiseDroppedTIC(i) = 0;
         boolCutOff(i) = 0;
         
+        %setting to NaN
+        noiseDropped(i,:) = NaN;
+        
     end
     
 end 
