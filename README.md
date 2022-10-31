@@ -8,6 +8,8 @@
 ## 1.0 About
 This is a MatLab algorithm developed to locate regions of interest (ROI) within 1D GC-MS datasets. The intention is that the ROIs are selected then subjected to further chemometrics, especially approaches where a low number of components is desired.
 
+The current release (v1.4) is the version described in the paper we recently published in the Journal of Chromatography A. See Referencing section below for the paper and how to cite this work.
+
 ## 2.0 Use
 Users input data as an **M** by **N** matrix into the function, where **M** is individual scans and **N** is the _m/z_ of each ion, and the matrix is ion intensities. 
 
@@ -27,6 +29,6 @@ Download our latest release (v1.2), open in the most recent release of MatLab, a
 * **boolCutOff**: 0 = scan not in ROI, 1 = scan in ROI.
 
 ## 3.0 Referencing
-Please cite the following in your work when our algorithm is utilized. Stay tuned for the publication of our manuscript.
+Please cite the following paper when using this work.
 
-* Giebelhaus, R.T.; Armstrong, M.D.S.; de la Mata, A.P; Harynuk, J.J. Untargeted Region of Interest Selection for GC-MS Data using a Pseudo F-Ratio Moving Window (ψFRMV). **2022**
+* Ryland T. Giebelhaus, Michael D. Sorochan Armstrong, A. Paulina de la Mata, and James J. Harynuk. Untargeted region of interest selection for gas chromatography - mass spectrometry data using a pseudo F-ratio moving window, Journal of Chromatography A, 2022, 1682, 463499; 10.1016/j.chroma.2022.463499
